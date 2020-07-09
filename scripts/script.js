@@ -11,8 +11,13 @@ const modalSubmitElements = [...modalSubmit.elements].filter(elem => elem.tagNam
 const modalBtnWarning = document.querySelector('.modal__btn-warning');
 
 
-const closeModal = function (event) {
+ function closeModal(event) {
+     console.log('thiS: ', thiS);
     const target = event.target;
+    console.log('target: ', target);
+    console.log('event.target: ', event.target);
+    console.log('event: ', event);
+    console.log(this);
     if (target.closest('.modal__close') ||
         target === this) {
         this.classList.add('hide');
@@ -46,6 +51,14 @@ modalSubmit.addEventListener('submit', event => {
     dataBase.push(itemObj);
     modalSubmit.reset();// перенести
 });
+// dont working
+modalBtnSubmit.addEventListener('click', event => {
+    const target = event.target;
+    console.log('target: ', target);
+
+    closeModal();
+});
+
 
 addAd.addEventListener('click', () => {
     modalAdd.classList.remove('hide');
