@@ -14,6 +14,7 @@ const modalFileInput = document.querySelector('.modal__file-input');
 const modalFileBtn = document.querySelector('.modal__file-btn');
 const modalImageAdd = document.querySelector('.modal__image-add');
 const searchInput = document.querySelector('.search__input');
+const menuContainer = document.querySelector('.menu__container');
 
 // for changeDataModalAdd
 const modalHeaderItem = document.querySelector('.modal__header-item');
@@ -79,7 +80,7 @@ modalFileInput.addEventListener('change', event => {
     reader.readAsBinaryString(file);
 
     reader.addEventListener('load', event => {
-        if (infoPhoto.size < 200000) {
+        if (infoPhoto.size < 600000) {
             modalFileBtn.textContent = infoPhoto.name;
             infoPhoto.base64 = btoa(event.target.result);
             modalImageAdd.src = `data:image/png;base64,${infoPhoto.base64}`;
@@ -141,6 +142,15 @@ catalog.addEventListener('click', event => {
         changeDataModalAdd(card.dataset.id);
         modalItem.classList.remove('hide');
         document.addEventListener('keyup', closeModal);
+    }
+});
+
+menuContainer.addEventListener('click', event => {
+    const target = event.target;
+
+    if (target.tagName === 'A') {
+        const result = dataBase.filter(item => item.category === target.dataset.category);
+        renderCard(result);
     }
 });
 
