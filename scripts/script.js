@@ -1,5 +1,6 @@
 'use strict';
 const dataBase = JSON.parse(localStorage.getItem('awito')) || [];
+let counter = dataBase.length;
 
 const modalAdd = document.querySelector('.modal__add');
 const addAd = document.querySelector('.add__ad');
@@ -12,6 +13,14 @@ const modalBtnWarning = document.querySelector('.modal__btn-warning');
 const modalFileInput = document.querySelector('.modal__file-input');
 const modalFileBtn = document.querySelector('.modal__file-btn');
 const modalImageAdd = document.querySelector('.modal__image-add');
+const searchInput = document.querySelector('.search__input');
+
+// for changeDataModalAdd
+const modalHeaderItem = document.querySelector('.modal__header-item');
+const modalImageItem = document.querySelector('.modal__image-item');
+const modalStatusItem = document.querySelector('.modal__status-item');
+const modalDescriptionItem = document.querySelector('.modal__description-item');
+const modaCostItem = document.querySelector('.modal__cost-item');
 
 const textFileBtn = modalFileBtn.textContent;
 const srcModalImage = modalImageAdd.src;
@@ -42,13 +51,13 @@ const closeModal = event => {
     }
 };
 
-const renderCard = () => {
+const renderCard = (DB = dataBase) => {
     catalog.textContent = '';
 
-    dataBase.forEach((item, i) => {
+    DB.forEach((item) => {
         catalog.insertAdjacentHTML('beforeend', `
-        <li class="card" data-id="${i}">
-            <img class="card__image" src="data:image/png;base64,${item.image }" alt="test">
+        <li class="card" data-id="${item.id}">
+            <img class="card__image" src="data:image/png;base64,${item.image}" alt="test">
             <div class="card__description">
             <h3 class="card__header">${item.nameItem}</h3>
             <div class="card__price">${item.costItem} ₽</div>
@@ -84,20 +93,23 @@ modalFileInput.addEventListener('change', event => {
 
 
 const changeDataModalAdd = (id) => {
-    const modalHeaderItem = document.querySelector('.modal__header-item');
-    const modalImageItem = document.querySelector('.modal__image-item');
-    const modalStatusItem = document.querySelector('.modal__status-item');
-    const modalDescriptionItem = document.querySelector('.modal__description-item');
-    const modaCostItem = document.querySelector('.modal__cost-item');
-    
-    const itemBD = dataBase[id];
+    const itemBD = dataBase.find(obj => obj.id === +id);
     modalHeaderItem.textContent = itemBD.nameItem;
-    modalStatusItem.textContent = itemBD.status;
+    modalStatusItem.textContent = itemBD.status === 'new' ? ' Новый' : 'Б/У';
     modalDescriptionItem.textContent = itemBD.descriptionItem;
     modaCostItem.textContent = itemBD.costItem;
-    modalImageItem.src = `data:image/png;base64,${itemBD.image }`;
+    modalImageItem.src = `data:image/png;base64,${itemBD.image}`;
+};
 
-}
+searchInput.addEventListener('input', () => {
+    const valueSearch = searchInput.value.trim().toLowerCase();
+
+    if (valueSearch.length > 2) {
+        const resSearch = dataBase.filter(item => item.nameItem.toLowerCase().includes(valueSearch) ||
+                                          item.descriptionItem.toLowerCase().includes(valueSearch));
+        renderCard(resSearch);
+    }
+});
 
 modalSubmit.addEventListener('input', checkForm);
 
@@ -107,11 +119,12 @@ modalSubmit.addEventListener('submit', event => {
     for (const elem of modalSubmitElements) {
         itemObj[elem.name] = elem.value;
     }
+    itemObj.id = counter++;
     itemObj.image = infoPhoto.base64;
     dataBase.push(itemObj);
     closeModal({ target: modalAdd });
     saveDB();
-    renderCard(); 
+    renderCard();
 });
 
 addAd.addEventListener('click', () => {
