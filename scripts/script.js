@@ -94,7 +94,7 @@ modalFileInput.addEventListener('change', event => {
 
 
 const changeDataModalAdd = (id) => {
-    const itemBD = dataBase.find(obj => obj.id === +id);
+    const itemBD = dataBase.find(obj => obj.id === parseInt(id));
     modalHeaderItem.textContent = itemBD.nameItem;
     modalStatusItem.textContent = itemBD.status === 'new' ? ' Новый' : 'Б/У';
     modalDescriptionItem.textContent = itemBD.descriptionItem;
@@ -107,7 +107,7 @@ searchInput.addEventListener('input', () => {
 
     if (valueSearch.length > 2) {
         const resSearch = dataBase.filter(item => item.nameItem.toLowerCase().includes(valueSearch) ||
-                                          item.descriptionItem.toLowerCase().includes(valueSearch));
+                                                  item.descriptionItem.toLowerCase().includes(valueSearch));
         renderCard(resSearch);
     }
 });
